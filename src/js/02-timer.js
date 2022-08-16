@@ -20,7 +20,6 @@ fieldElements.forEach(elem => {
 });
 
 let counter;
-let timer = {};
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
@@ -39,24 +38,21 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
 
 const date = new Date();
-// console.log('Date: ', convertMs(date));
 startButton.disabled = true;
 
 const options = {
   enableTime: true,
   time_24hr: true,
-  defaultDate: new Date(),
+  defaultDate: date,
   minuteIncrement: 1,
   onClose(selectedDates) {
     if (selectedDates[0] > date) {
       startButton.disabled = false;
-      counter = selectedDates[0] - new Date();
+      counter = selectedDates[0] - date;
       startButton.addEventListener('click', startCounter);
     } else {
-      // window.alert('Please choose a date in the future');
       Notify.failure('Please choose a date in the future');
     }
   },
@@ -64,12 +60,12 @@ const options = {
 
 function startCounter() {
   const intervalId = setInterval(() => {
-    timer = convertMs(counter);
+    const { days, hours, minutes, seconds } = convertMs(counter);
     startButton.disabled = true;
-    daysCounter.textContent = addLeadingZero(timer.days);
-    hoursCounter.textContent = addLeadingZero(timer.hours);
-    minutesCounter.textContent = addLeadingZero(timer.minutes);
-    secondsCounter.textContent = addLeadingZero(timer.seconds);
+    daysCounter.textContent = addLeadingZero(days);
+    hoursCounter.textContent = addLeadingZero(hours);
+    minutesCounter.textContent = addLeadingZero(minutes);
+    secondsCounter.textContent = addLeadingZero(seconds);
     if (counter >= 1000) counter -= 1000;
     else {
       clearInterval(intervalId);
@@ -81,6 +77,4 @@ function startCounter() {
 
 flatpickr('#datetime-picker', options);
 
-function addLeadingZero(value) {
-  return String(value).padStart(2, '0');
-}
+const addLeadingZero = value => `${value}`.padStart(2, '0');
